@@ -1,6 +1,9 @@
+from datetime import date, datetime
 from tkinter import Image
+from urllib import response
+from django.forms import DateTimeField
 from django.shortcuts import render, redirect
-from .models import Myuser, Document
+from .models import Myuser, Document, Time
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password, check_password #비밀번호 암호화 / 패스워드 체크(db에있는거와 일치성확인)
 from django.views.decorators.csrf import csrf_exempt
@@ -21,7 +24,7 @@ def home(request):
 
 
 
-def login(request):
+def login(request): #출근
     response_data = {}
     
     if request.method == "GET" :
@@ -29,43 +32,70 @@ def login(request):
         return render(request, 'login.html')
 
     elif request.method == "POST":
-        login_username = request.POST.get('username', None)
-        login_password = request.POST.get('password', None)
-        email = request.POST.get('email', None) 
-
-
-        if not (login_username and login_password):
-            response_data['error']="아이디와 비밀번호를 모두 입력해주세요."
-        else : 
-            myuser = Myuser.objects.get(username=login_username) #db에서 꺼내는 명령. Post로 받아온 username으로 , db의 username을 꺼내온다. #user이름에 해당하는 이메일 주소를 받아와야함
-        
-            if check_password(login_password, myuser.password):
-                request.session['user'] = myuser.id #세션도 딕셔너리 변수 사용과 똑같이 사용하면 된다.
-                #세션 user라는 key에 방금 로그인한 id를 저장한것.
-                               
-                e_mail = myuser.email
-                mail_subject = '이메일 보냅니다!'
-                message = render_to_string('smtp_email.html', {
-                'name': ''
-                    })
-                to_email = e_mail
-                send_email = EmailMessage(mail_subject, message, to=[to_email])
-                send_email.send()
-
-                return redirect('/')
-            else:
-                response_data['error'] = "비밀번호를 틀렸습니다."
-
-        return render(request, 'login.html',response_data)
 
 
 
+            fileTitle = request.POST['text']   
+            uploadFile = request.FILES['image']   
+            document = Document(
+            title=fileTitle,
+            uploadedFile=uploadFile,
+            )
+            document.save()
+            
 
-def logout(request):
-    request.session.pop('user')
+            re, logout_username = test_image.check(model, model1, f, fileTitle)
+            myuser = Myuser.objects.get(username=logout_username)
+            username=Myuser.username,
+            email = Myuser.email,
+            position = Myuser.position,
+            department = Myuser.department,           
+
+            dateTimeOfUpload = request.POST['text']
+            time = Time(
+            username = Myuser.username,
+            position = Myuser.position,
+            department = Myuser.department,
+            dateTimeOfAM = datetime.now
+            )
+            time.save()
+
+            e_mail = myuser.email
+            mail_subject = '이메일 보냅니다!'
+            message = render_to_string('smtp_email.html', {
+            'name': ''
+                })
+            to_email = e_mail
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+            return render(request, 'login.html',response_data)
+
+
+def logout(request):  #퇴근/ 이미지 파일을 가져와서 이미지 이름 ~~, 이름으로 기존 db에 있는 해당하는 유저의 정보를 가져오기
+    response_data = {}
+
+    if request.method == "POST":
+        fileTitle = request.POST['text']    
+        uploadFile = request.FILES['image']    
+        document = Document(
+        title=fileTitle,
+        uploadedFile=uploadFile,
+        )
+        document.save()
+
+        #가장 최근에 작성된 db, 유저이름 
+        re, logout_username = test_image.check(model, model1, f, fileTitle)
+        myuser = Myuser.objects.get(username=logout_username)
+        username=Myuser.username,
+        email=Myuser.email,
+        position = Myuser.position,
+        department = Myuser.department,
+       
+        time = Time.objects.filter(username=username).filter(dateTimeOfPM="null")     
+        time.dateTime2 = datetime.now
+        time.save()
 
     return redirect('/')
-
 
 
 def register(request):  #나중에 html의 url을 연결하면 변수가 이곳읉롱해 request로 들어온다.
@@ -78,22 +108,15 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
         username = request.POST.get('username', None)             #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
         email = request.POST.get('email', None)                   #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게됌.
         password = request.POST.get('password', None)
-        re_password = request.POST.get('re-password', None)
+        re_password = request.POST.get('re_password', None)
         imagename = request.POST.get('imagename', None)
+        position = request.POST.get('position', None)
+        department = request.POST.get('department',None)
         # if password != re_password :
-        
+        print(username, email, password, re_password, imagename, position, department)
         #     return HttpResponse("비밀번호가 다릅니다.")   # 페이지를 바꾸어 메시지 출력하는 메소드
-        if not(username and password and re_password and email and imagename):
+        if not(username and password  and email and imagename and position and department):
             response_data['error'] = '모든 값을 입력해야 합니다.'
-        elif password != re_password :
-            response_data['error'] = '비밀번호가 다릅니다.'
-            fileTitle = request.POST['text']    #1 원본 사진과 갱신되는 사진 파일명을 구분되게 바꿔줘야함. 근데 크게 신경 안써도 된다고 하심.
-            uploadFile = request.FILES['image']    #2 갱신되는 사진은 지워져야되는데 어떻게 해야 할지,,,,,?
-            document = Document(
-            title=fileTitle,
-            uploadedFile=uploadFile
-            )
-            document.save()
 
         else : 
             myuser = Myuser(
@@ -102,7 +125,16 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
             email=email,
             password= make_password(password),
             imagename = imagename,
+            position = position,
+            department = department,
             )
+            fileTitle = request.POST['text']    #1 원본 사진과 갱신되는 사진 파일명을 구분되게 바꿔줘야함. 근데 크게 신경 안써도 된다고 하심.
+            uploadFile = request.FILES['image']    #2 갱신되는 사진은 지워져야되는데 어떻게 해야 할지,,,,,?
+            document = Document(
+            title=fileTitle,
+            uploadedFile=uploadFile,
+            )
+            document.save()
             myuser.save()
         return render(request, 'register.html', response_data)
 

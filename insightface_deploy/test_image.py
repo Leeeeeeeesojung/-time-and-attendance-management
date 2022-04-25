@@ -70,9 +70,26 @@ def init():
     return model, model1, f                                     # value greater than 0.4 with respect to the best bounding boxes will be removed.
     ################################################################
 # Analysis faces in this image
-def check(model,model1,f,filename):
-    font = cv2.FONT_HERSHEY_SIMPLEX    #*
-    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/'+filename)                            #__________________________________________Test image______________________________________
+def check(model,model1,f,file_path):
+    folder = 'C:/Users/Leesojung/work/community/media/result'
+    images = []
+
+
+    file_name = []
+    file_list = os.listdir(folder)
+    for file in file_list:
+        if file.count(".") == 1:
+            name = file.split('.')[0]
+            file_name.append(name)
+
+        else:
+            for k in range(len(file)-1,0,-1):
+                if file[k]=='.':
+                    file_name.append(file[:k])
+                    break
+
+    font = cv2.FONT_HERSHEY_SIMPLEX    #*                           #__________________________________________Test image______________________________________
+    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result'+file_path+'.jpg')
     frame = cv2.resize(frame, (1080, 780)) #1080 780
 
     faces = model1.get(frame)
@@ -91,10 +108,8 @@ def check(model,model1,f,filename):
                 for i in range(0, len(f)):
                     if np.sum(np.square(f_test-f[i])) < 1.1: # Ecludian distance
                         print("success")
-                        return 1
-                    else:
-                        print("fail")
+                        dd = i
+                        print(file_name[dd])
+                        return "1", file_name[dd]
 
-
-# model, model1, f = init()
-# check(model, model1, f)
+    return "0" 
