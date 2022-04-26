@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from tkinter import Image
 from urllib import response
 from django.forms import DateTimeField
 from django.shortcuts import render, redirect
