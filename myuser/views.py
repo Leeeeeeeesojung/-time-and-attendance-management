@@ -1,4 +1,6 @@
 from datetime import date, datetime
+from email.policy import HTTP
+from operator import truediv
 from urllib import response
 from django.forms import DateTimeField
 from django.shortcuts import render, redirect
@@ -22,18 +24,17 @@ def home(request):
     return HttpResponse('로그인 완료.')
 
 
-
+@csrf_exempt
 def login(request): #출근
     response_data = {}
+    global username
     
     if request.method == "GET" :
     
         return render(request, 'login.html')
 
     elif request.method == "POST":
-
-
-
+            
             fileTitle = request.POST['text']   
             uploadFile = request.FILES['image']   
             document = Document(
@@ -41,23 +42,42 @@ def login(request): #출근
             uploadedFile=uploadFile,
             )
             document.save()
-            
+            #사진 지워주는 기능 추가
 
-            re, logout_username = test_image.check(model, model1, f, fileTitle)
-            myuser = Myuser.objects.get(username=logout_username)
-            username=Myuser.username,
-            email = Myuser.email,
-            position = Myuser.position,
-            department = Myuser.department,           
 
-            dateTimeOfUpload = request.POST['text']
+            login_username = test_image.check(model, model1, f, fileTitle)
+
+            flag = Myuser.objects.filter(username=login_username).exists()
+            if flag:
+                myuser = Myuser.objects.get(username=login_username)
+                username = Myuser.username,
+                email = Myuser.email,
+                position = Myuser.position,
+                department = Myuser.department,
+                return HttpResponse("success")
+
+            else:
+                return HttpResponse("fail")
+
+            email = request.POST.get('email', None)
+            imagename = request.POST.get('imagename', None)
+            position = request.POST.get('position', None)
+            department = request.POST.get('department',None)
+
+            print(email, imagename, position, department)
+             
+            dateupload = request.POST['text']
             time = Time(
             username = Myuser.username,
             position = Myuser.position,
             department = Myuser.department,
             dateTimeOfAM = datetime.now
             )
+            document = Document(
+            dateTimeOfUpload = dateupload
+            )
             time.save()
+            document.save()
 
             e_mail = myuser.email
             mail_subject = '이메일 보냅니다!'
@@ -67,7 +87,7 @@ def login(request): #출근
             to_email = e_mail
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
-            return render(request, 'login.html',response_data)
+            return HttpResponse("1") 
 
 
 def logout(request):  #퇴근/ 이미지 파일을 가져와서 이미지 이름 ~~, 이름으로 기존 db에 있는 해당하는 유저의 정보를 가져오기
@@ -83,12 +103,24 @@ def logout(request):  #퇴근/ 이미지 파일을 가져와서 이미지 이름
         document.save()
 
         #가장 최근에 작성된 db, 유저이름 
-        re, logout_username = test_image.check(model, model1, f, fileTitle)
-        myuser = Myuser.objects.get(username=logout_username)
-        username=Myuser.username,
-        email=Myuser.email,
-        position = Myuser.position,
-        department = Myuser.department,
+        logout_username = test_image.check(model, model1, f, fileTitle)
+        flag = Myuser.objects.filter(user_id=logout_username).exists()
+        if flag:
+            myuser = Myuser.objects.get(username=logout_username)
+            username=Myuser.username,
+            email=Myuser.email,
+            position = Myuser.position,
+            department = Myuser.department,
+        else:
+            response_data['error']
+
+        username = request.POST.get('username', None)             #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
+        email = request.POST.get('email', None)                   #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게됌.
+        imagename = request.POST.get('imagename', None)
+        position = request.POST.get('position', None)
+        department = request.POST.get('department',None)
+
+        print(username, email, imagename, position, department)
        
         time = Time.objects.filter(username=username).filter(dateTimeOfPM="null")     
         time.dateTime2 = datetime.now
@@ -96,23 +128,31 @@ def logout(request):  #퇴근/ 이미지 파일을 가져와서 이미지 이름
 
     return redirect('/')
 
-
+@csrf_exempt
 def register(request):  #나중에 html의 url을 연결하면 변수가 이곳읉롱해 request로 들어온다.
     #html의 name값으로 들어오게된다.
     response_data = {}
-
     if request.method == "GET" : #일반적으로 url입력을 통해 들어왔을때
         return render(request, 'register.html')
     elif request.method == "POST": #submit버튼을 눌렀을때
+        flag = Myuser.objects.filter(user_id=username).exists()
+        if flag:
+                myuser = Myuser.objects.get(username)
+                username=Myuser.username,
+                email=Myuser.email,
+                position = Myuser.position,
+                department = Myuser.department,
+        else:
+            response_data['error']
+
         username = request.POST.get('username', None)             #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
         email = request.POST.get('email', None)                   #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게됌.
         password = request.POST.get('password', None)
-        re_password = request.POST.get('re_password', None)
         imagename = request.POST.get('imagename', None)
         position = request.POST.get('position', None)
         department = request.POST.get('department',None)
         # if password != re_password :
-        print(username, email, password, re_password, imagename, position, department)
+        print(username, email, password,  imagename, position, department)
         #     return HttpResponse("비밀번호가 다릅니다.")   # 페이지를 바꾸어 메시지 출력하는 메소드
         if not(username and password  and email and imagename and position and department):
             response_data['error'] = '모든 값을 입력해야 합니다.'
@@ -127,8 +167,8 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
             position = position,
             department = department,
             )
-            fileTitle = request.POST['text']    #1 원본 사진과 갱신되는 사진 파일명을 구분되게 바꿔줘야함. 근데 크게 신경 안써도 된다고 하심.
-            uploadFile = request.FILES['image']    #2 갱신되는 사진은 지워져야되는데 어떻게 해야 할지,,,,,?
+            fileTitle = request.POST['text']    
+            uploadFile = request.FILES['image']   
             document = Document(
             title=fileTitle,
             uploadedFile=uploadFile,

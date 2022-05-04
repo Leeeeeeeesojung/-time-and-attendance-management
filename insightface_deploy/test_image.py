@@ -89,7 +89,7 @@ def check(model,model1,f,file_path):
                     break
 
     font = cv2.FONT_HERSHEY_SIMPLEX    #*                           #__________________________________________Test image______________________________________
-    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result'+file_path+'.jpg')
+    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/'+file_path+'.jpg')
     frame = cv2.resize(frame, (1080, 780)) #1080 780
 
     faces = model1.get(frame)
