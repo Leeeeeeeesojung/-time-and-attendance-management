@@ -73,6 +73,12 @@ def login(request): #출근
                 position = myuser.position,
                 department = myuser.department,
                 
+                jsondata = {}
+                jsondata["username"] = username
+                # jsondata["datetime"] = datetime.now()
+                jsondata["response"] = "1"
+                return JsonResponse(jsondata)
+                
             else:
                 return HttpResponse("fail")
 
