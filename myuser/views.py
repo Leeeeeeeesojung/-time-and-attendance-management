@@ -191,7 +191,7 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
         password = request.POST['password']
         position = request.POST['position']
         department = request.POST['department']
-        uploadFile = request.FILES('image')   
+        uploadFile = request.FILES['image']   
         document = Document(
         uploadedFile=uploadFile,
         )
