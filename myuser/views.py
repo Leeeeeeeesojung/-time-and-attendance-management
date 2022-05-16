@@ -186,7 +186,7 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
         return render(request, 'register.html')
     elif request.method == "POST":
          #submit버튼을 눌렀을때
-        username = request.POS.get('username')     #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
+        username = request.POST.get('username')     #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
         email = request.POST.get('email')           #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게됌.
         password = request.POST.get('password')
         position = request.POST.get('position')
