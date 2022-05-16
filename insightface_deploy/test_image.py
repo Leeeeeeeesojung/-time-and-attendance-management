@@ -71,9 +71,13 @@ def init():
     ################################################################
 # Analysis faces in this image
 def check(model,model1,f,file_path):
+    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
+    if os.path.isfile('C:/Users/Leesojung/work/community/media/result/'+str(file_path)):
+       os.remove('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
+
     folder = 'C:/Users/Leesojung/work/community/media/result'
     images = []
-
+    print(images)
 
     file_name = []
     file_list = os.listdir(folder)
@@ -86,10 +90,12 @@ def check(model,model1,f,file_path):
             for k in range(len(file)-1,0,-1):
                 if file[k]=='.':
                     file_name.append(file[:k])
+                    print(file_name)
                     break
 
     font = cv2.FONT_HERSHEY_SIMPLEX    #*                           #__________________________________________Test image______________________________________
-    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/'+file_path+'.jpg')
+
+
     frame = cv2.resize(frame, (1080, 780)) #1080 780
 
     faces = model1.get(frame)
@@ -99,10 +105,11 @@ def check(model,model1,f,file_path):
         start_pt = (x,y)
         end_pt = (w,h)
         crop_img = frame[y:h, x:w]
-
         h1, w1, c = crop_img.shape
         if h1>50:
+            print('h1>50')
             if w1>50:
+                print('w1>50')
                 img_ = model.get_input(crop_img)
                 f_test = model.get_feature(img_)
                 for i in range(0, len(f)):
@@ -111,5 +118,9 @@ def check(model,model1,f,file_path):
                         dd = i
                         print(file_name[dd])
                         return "1", file_name[dd]
+                    else:
+                        print('fail')
+                        
+    if os.path.isfile('C:/Users/Leesojung/work/community/media/result/'+str(file_path)):
+        os.remove('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
 
-    return "0" 
