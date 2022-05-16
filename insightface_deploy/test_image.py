@@ -1,7 +1,7 @@
 
 from insightface_deploy import face_model
 import argparse
-from cv2 import cv2
+from cv2 import cv2, imshow
 import sys
 import numpy as np
 
@@ -72,12 +72,13 @@ def init():
 # Analysis faces in this image
 def check(model,model1,f,file_path):
     frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
+
+
     if os.path.isfile('C:/Users/Leesojung/work/community/media/result/'+str(file_path)):
        os.remove('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
-
     folder = 'C:/Users/Leesojung/work/community/media/result'
     images = []
-    print(images)
+    print(file_path)
 
     file_name = []
     file_list = os.listdir(folder)
@@ -96,7 +97,7 @@ def check(model,model1,f,file_path):
     font = cv2.FONT_HERSHEY_SIMPLEX    #*                           #__________________________________________Test image______________________________________
 
 
-    frame = cv2.resize(frame, (1080, 780)) #1080 780
+    frame = cv2.resize(frame,(1080, 780)) #1080 780
 
     faces = model1.get(frame)
     for idx, face in enumerate(faces):

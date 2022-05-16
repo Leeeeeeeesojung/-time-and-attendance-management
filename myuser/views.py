@@ -8,7 +8,7 @@ from django.forms import DateTimeField
 from django.shortcuts import render, redirect
 from requests import Response
 from scipy.misc import central_diff_weights
-from .models import Myuser, Document, Start, End, Center, Test
+from .models import Myuser, Document, Center, Test
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password, check_password #비밀번호 암호화 / 패스워드 체크(db에있는거와 일치성확인)
 from django.views.decorators.csrf import csrf_exempt
@@ -184,46 +184,35 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
     response_data = {}
     if request.method == "GET" : #일반적으로 url입력을 통해 들어왔을때
         return render(request, 'register.html')
-    elif request.method == "POST": #submit버튼을 눌렀을때
-        # username = request.POST.get('username', 0)      #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
-        # email = request.POST.get('email', 0)             #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게됌.
-        # password = request.POST.get('password', 0)
-        # position = request.POST.get('position', 0)
-        # department = request.POST.get('department', 0)
+    elif request.method == "POST":
+         #submit버튼을 눌렀을때
+        username = request.POS.get('username')     #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
+        email = request.POST.get('email')           #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게됌.
+        password = request.POST.get('password')
+        position = request.POST.get('position')
+        department = request.POST.get('department')
         uploadFile = request.FILES['image']   
         document = Document(
         uploadedFile=uploadFile,
         )
         document.save()
 
-        flag, register_username = test_image.check(model, model1, f, uploadFile)
-        print(flag, register_username)
-        flag = Myuser.objects.filter(username=register_username).exists()
-        print(flag, Myuser.objects.filter(username=register_username))
+        flag = Myuser.objects.filter(username=username).exists()
+        print(flag, Myuser.objects.filter(username=username))
         if flag:
-                myuser = Myuser.objects.get(username=register_username)
+                myuser = Myuser.objects.get(username=username)
                 username=myuser.username,
                 email=myuser.email,
                 password=myuser.password,
                 position = myuser.position,
                 department = myuser.department,
+                
+                jsondata = {}
+                jsondata["username"] = username
+                # jsondata["datetime"] = datetime.now()
+                jsondata["response"] = "1"
+                return JsonResponse(jsondata)
         else:
-            return HttpResponse("fail")
-
-        print(username, email, password, position, department)
-
-        username = request.POST.get('username', None)      #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
-        email = request.POST.get('email', None)             #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게댐.
-        password = request.POST.get('password', None)       
-        position = request.POST.get('position', None)
-        department = request.POST.get('department', None)
-
-        # if password != re_password :
-        #     return HttpResponse("비밀번호가 다릅니다.")   # 페이지를 바꾸어 메시지 출력하는 메소드
-        if not(username and password  and email and position and department):
-            response_data['error'] = '모든 값을 입력해야 합니다.'
-
-        else : 
             myuser = Myuser(
             username=username,
             email=email,
@@ -231,20 +220,14 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
             position = position,
             department = department,
             )
-            # fileTitle = request.POST['text']    
-            # uploadFile = request.FILES['image']   
-            # document = Document(
-            # # title=fileTitle,
-            # uploadedFile=uploadFile,
-            # )
-            # document.save()
+           
             myuser.save()
 
-        jsondata = {}
-        jsondata["username"] = username
-        # jsondata["datetime"] = datetime.now()
-        jsondata["response"] = "1"
-        return JsonResponse(jsondata)
+            jsondata = {}
+            jsondata["username"] = username
+            # jsondata["datetime"] = datetime.now()
+            jsondata["response"] = "1"
+            return JsonResponse(jsondata)
 
 @csrf_exempt
 def upload(request):

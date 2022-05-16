@@ -26,20 +26,8 @@ class Myuser(models.Model): #회원정보
         return self.username
     class Meta :   #메타 클래스 _ 테이블을 이름 직접 설정할때. https://docs.djangoproject.com/en/3.0/ref/models/options/
         db_table = 'community_myuser'
-        verbose_name = "사용자들(Meta)클래스"
-        verbose_name_plural = "사용자들(Meta)클래스"
-
-class Start(models.Model): #회원정보: 출퇴근 시간 기록 보관, 시간, 사람이름, 부서, 직책
-    dateTimeOfAM = models.DateTimeField(auto_now=True, verbose_name='출근시간')
-    username= models.CharField(max_length = 64, verbose_name='사용자명')
-    position = models.CharField(max_length=64, verbose_name='직책')
-    department = models.CharField(max_length=64, verbose_name='부서')
-    
-class End(models.Model):
-    dateTimeOfPM = models.DateTimeField(null=True,blank=True, verbose_name='퇴근시간')
-    username= models.CharField(max_length = 64, verbose_name='사용자명')
-    position = models.CharField(max_length=64, verbose_name='직책')
-    department = models.CharField(max_length=64, verbose_name='부서')
+        verbose_name = "근태관리_user"
+        verbose_name_plural = "근태관리_user"
 
 class Center(models.Model):
     middleTime = models.DateTimeField(null=True, blank=True, verbose_name='점심시간')
