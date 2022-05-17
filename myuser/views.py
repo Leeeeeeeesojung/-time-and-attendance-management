@@ -148,47 +148,47 @@ def logout(request):  #퇴근/ 이미지 파일을 가져와서 이미지 이름
         
 
 
-@csrf_exempt
-#점심시간
-def lunch(request):
-    response_data = {}
+# @csrf_exempt
+# #점심시간
+# def lunch(request):
+#     response_data = {}
 
-    if request.method == "POST":
+#     if request.method == "POST":
 
-        fileTitle = request.POST['text']
-        uploadFile = request.FILES['image']
-        document = Document(
-            title = fileTitle,
-            uploadedFile=uploadFile,
-        )
-        document.save()
+#         fileTitle = request.POST['text']
+#         uploadFile = request.FILES['image']
+#         document = Document(
+#             title = fileTitle,
+#             uploadedFile=uploadFile,
+#         )
+#         document.save()
 
-        flag, lunch_username = test_image.check(model, model1, f, fileTitle)
-        print(flag, lunch_username)
-        flag = Myuser.objects.filter(username=lunch_username).exists()
-        print(flag, Myuser.objects.filter(username=lunch_username))
-        if flag:
-            myuser = Myuser.objects.get(username=lunch_username)
-            username=myuser.username,
-            email=myuser.email,
-            position = myuser.position,
-            department = myuser.department,
-        else:
-            return HttpResponse("fail")
+#         flag, lunch_username = test_image.check(model, model1, f, fileTitle)
+#         print(flag, lunch_username)
+#         flag = Myuser.objects.filter(username=lunch_username).exists()
+#         print(flag, Myuser.objects.filter(username=lunch_username))
+#         if flag:
+#             myuser = Myuser.objects.get(username=lunch_username)
+#             username=myuser.username,
+#             email=myuser.email,
+#             position = myuser.position,
+#             department = myuser.department,
+#         else:
+#             return HttpResponse("fail")
 
-        print(myuser, username, email, position, department)
+#         print(myuser, username, email, position, department)
         
-        center = Center(
-        username = username,
-        position = position,
-        department = department,
-        middleTime = datetime.now()
-        )
-        center.save()
+#         center = Center(
+#         username = username,
+#         position = position,
+#         department = department,
+#         middleTime = datetime.now()
+#         )
+#         center.save()
 
-        center = datetime.now()
-        center = Center.objects.filter(username=username, middleTime__contains = "2022-05%")
-        return HttpResponse("succcess")
+#         center = datetime.now()
+#         center = Center.objects.filter(username=username, middleTime__contains = "2022-05%")
+#         return HttpResponse("succcess")
 
 #회원가입        
 @csrf_exempt
@@ -197,18 +197,18 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
         return render(request, 'register.html')
     elif request.method == "POST":
          #submit버튼을 눌렀을때       
+
         username = request.POST['username']     #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
         email = request.POST['email']           #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게됌.
         password = request.POST['password']
         position = request.POST['position']
         department = request.POST['department']
-        uploadFile = request.FILES['image']
-           
+        uploadFile = request.FILES['image']  
         document = Document(
-        title = username,
         uploadedFile=uploadFile,
-        )
+        ) 
         document.save()
+        
 
         flag = Myuser.objects.filter(username=username).exists()
         print(flag, Myuser.objects.filter(username=username))
@@ -232,8 +232,7 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
             password= make_password(password),
             position = position,
             department = department,
-            )
-           
+            )   
             myuser.save()
 
             jsondata = {}
@@ -250,6 +249,13 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
 def upload(request):
     if request.method == 'POST':
         fileTitle = request.POST['text']
+        username = request.POST['username']
+        uploadFile = request.FILES['image']
+        email = request.POST['email']           #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게됌.
+        password = request.POST['password']
+        position = request.POST['position']
+        department = request.POST['department']
+
         uploadFile = request.FILES['image']
         document = Document(
             title=fileTitle,
