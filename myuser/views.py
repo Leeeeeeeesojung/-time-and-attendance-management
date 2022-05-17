@@ -72,7 +72,7 @@ def login(request): #출근
                 email = myuser.email,
                 position = myuser.position,
                 department = myuser.department,
-                
+
                 jsondata = {}
                 jsondata["username"] = username
                 # jsondata["datetime"] = datetime.now()
@@ -118,9 +118,10 @@ def logout(request):  #퇴근/ 이미지 파일을 가져와서 이미지 이름
         document.save()
 
         #가장 최근에 작성된 db, 유저이름
+        print(uploadFile)
         flag, logout_username = test_image.check(model, model1, f, uploadFile)
         print(flag, logout_username)
-        flag = Myuser.objects.filter(username=logout_username).exists()
+        Myuser.objects.filter(username=logout_username).exists()
         print(Myuser.objects.filter(username=logout_username))
         if flag:
             myuser = Myuser.objects.get(username=logout_username)
@@ -128,18 +129,24 @@ def logout(request):  #퇴근/ 이미지 파일을 가져와서 이미지 이름
             email=myuser.email,
             position = myuser.position,
             department = myuser.department,
+            jsondata = {}
+            jsondata["username"] = username
+            # jsondata["datetime"] = datetime.now()
+            jsondata["response"] = "1"
+            test = Test.objects.filter(username=username).last()
+            test.dateTimeOfPM = datetime.now()
+            test.save()
+            print(myuser, username, email, position, department)
+
+            jsondata = userinfoToJson(myuser)
+            return JsonResponse(jsondata)
+            
 
         else:
             return HttpResponse("fail")
             
-        print(myuser, username, email, position, department)
         
-        test = Test.objects.filter(username=username).last()
-        test.dateTimeOfPM = datetime.now()
-        test.save()
 
-        jsondata = userinfoToJson(myuser)
-        return JsonResponse(jsondata)
 
 @csrf_exempt
 #점심시간
@@ -182,23 +189,23 @@ def lunch(request):
         center = datetime.now()
         center = Center.objects.filter(username=username, middleTime__contains = "2022-05%")
         return HttpResponse("succcess")
-        
+
+#회원가입        
 @csrf_exempt
-#회원가입
 def register(request):  #나중에 html의 url을 연결하면 변수가 이곳을통해 request로 들어온다.
-    #html의 name값으로 들어오게된다.
-    response_data = {}
     if request.method == "GET" : #일반적으로 url입력을 통해 들어왔을때
         return render(request, 'register.html')
     elif request.method == "POST":
-         #submit버튼을 눌렀을때
+         #submit버튼을 눌렀을때       
         username = request.POST['username']     #POST로 딕셔너리형태로 넘어오기때문에 이렇게.... 되는구나
         email = request.POST['email']           #만약 email 이라는 key에 해당하는 value가 없다면 None을 넘기게됌.
         password = request.POST['password']
         position = request.POST['position']
         department = request.POST['department']
-        uploadFile = request.FILES['image']   
+        uploadFile = request.FILES['image']
+           
         document = Document(
+        title = username,
         uploadedFile=uploadFile,
         )
         document.save()
@@ -234,7 +241,11 @@ def register(request):  #나중에 html의 url을 연결하면 변수가 이곳�
             # jsondata["datetime"] = datetime.now()
             jsondata["response"] = "1"
             return JsonResponse(jsondata)
-
+    jsondata = {}
+    jsondata["username"] = "none"
+    # jsondata["datetime"] = datetime.now()
+    jsondata["response"] = "0"
+    return JsonResponse(jsondata)
 @csrf_exempt
 def upload(request):
     if request.method == 'POST':

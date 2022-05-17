@@ -101,7 +101,6 @@ def check(model,model1,f,file_path):
 
     faces = model1.get(frame)
     for idx, face in enumerate(faces):
-
         x, y, w, h = (face.bbox.astype(np.int).flatten())
         start_pt = (x,y)
         end_pt = (w,h)
@@ -120,8 +119,5 @@ def check(model,model1,f,file_path):
                         print(file_name[dd])
                         return "1", file_name[dd]
                     else:
-                        print('fail')
-                        
-    if os.path.isfile('C:/Users/Leesojung/work/community/media/result/'+str(file_path)):
-        os.remove('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
-
+                       print('fail')                   
+    return "0","None"
