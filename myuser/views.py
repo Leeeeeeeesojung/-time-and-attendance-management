@@ -256,6 +256,8 @@ def upload(request):
         position = request.POST['position']
         department = request.POST['department']
 
+        # print(fileTitle, username, uploadFile, email, password, position, department)
+
         uploadFile = request.FILES['image']
         document = Document(
             title=fileTitle,
