@@ -6,22 +6,44 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
-    <height>475</height>
+    <width>605</width>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Commute Management</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout"/>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>work in</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="pushButton_signup">
+      <property name="text">
+       <string>sign up</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>work out</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>590</width>
+     <width>605</width>
      <height>22</height>
     </rect>
    </property>

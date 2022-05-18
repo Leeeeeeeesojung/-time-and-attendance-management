@@ -2,10 +2,13 @@ QT += core gui widgets
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    signupwindow.cpp
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    signupwindow.ui
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    signupwindow.h
