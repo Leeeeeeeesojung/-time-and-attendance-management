@@ -87,7 +87,11 @@ class FaceModel:
     input_blob = np.expand_dims(aligned, axis=0)
     data = mx.nd.array(input_blob)
     db = mx.io.DataBatch(data=(data,))
-    self.model.forward(db, is_train=False)
+    try:
+      self.model.forward(db, is_train=False)
+    except:
+      return 0
+      
     #예외처리
     embedding = self.model.get_outputs()[0].asnumpy()
     embedding = sklearn.preprocessing.normalize(embedding).flatten()

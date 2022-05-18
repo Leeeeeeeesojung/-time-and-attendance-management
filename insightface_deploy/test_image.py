@@ -58,7 +58,9 @@ def init():
         if images is not None:
             images.append(img)
         img = model.get_input(img)
-        f.append(model.get_feature(img))
+        ff = model.get_feature(img)
+        if ff != 0:
+            f.append(ff)
 
 
     #______________________________________face_recognition_model_____________________________________________________________________
