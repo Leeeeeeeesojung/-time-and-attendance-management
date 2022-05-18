@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "signupwindow.h"
+#include "capturewindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,6 +24,7 @@ private:
     Ui::MainWindow *ui;
 
     SignUpWindow* signup_window;
+    CaptureWindow* capture_window;
 };
 
 #endif // MAINWINDOW_H

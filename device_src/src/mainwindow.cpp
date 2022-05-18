@@ -8,6 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     signup_window = new SignUpWindow();
+    capture_window = new CaptureWindow();
+
+    connect(signup_window, SIGNAL(capture_clicked()), capture_window, SLOT(show()));
 }
 
 MainWindow::~MainWindow()

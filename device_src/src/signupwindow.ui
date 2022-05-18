@@ -55,14 +55,14 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="pushButton_capture">
         <property name="text">
          <string>Face Capture</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="pushButton_cancel">
         <property name="text">
          <string>Cancel</string>
         </property>
