@@ -1,5 +1,7 @@
 QT += core gui widgets
 
+CONFIG += c++11
+
 SOURCES += \
     capturewindow.cpp \
     eCAM130_TRICUTX2.cpp \
@@ -18,3 +20,7 @@ HEADERS += \
     eCAM130_common.h \
     mainwindow.h \
     signupwindow.h
+
+LIBS += `pkg-config opencv --libs` \
+-lv4l2 \
+-lusb-1.0 -ludev
