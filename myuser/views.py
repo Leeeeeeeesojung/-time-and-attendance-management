@@ -78,9 +78,6 @@ def login(request): #출근
                 # jsondata["datetime"] = datetime.now()
                 jsondata["response"] = "1"
                 return JsonResponse(jsondata)
-                
-            else:
-                return HttpResponse("fail")
 
             print(myuser, username, email, position, department)
 
@@ -103,6 +100,8 @@ def login(request): #출근
 
             jsondata = userinfoToJson(myuser)
             return JsonResponse(jsondata) 
+    else:
+                return HttpResponse("fail")
 
 @csrf_exempt
 #퇴근
