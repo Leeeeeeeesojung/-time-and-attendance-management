@@ -29,8 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     /*Frame image*/
     frame_yuv = new cv::Mat(CAM_HEIGHT, CAM_WIDTH, CV_8UC2);
     frame_rgb = new cv::Mat(CAM_HEIGHT, CAM_WIDTH, CV_8UC3);
-    frame_qimg = new QImage(frame_rgb->data, frame_rgb->cols, frame_rgb->rows,
+    frame_qimg = new QImage(frame_rgb->data, CAM_WIDTH, CAM_HEIGHT,
                             QImage::Format_RGB888);
+
     plabel_frame = capture_window->plabel_frame;
 
     /*Start capture thread*/
@@ -46,9 +47,12 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete signup_window;
-    delete  capture_window;
+    delete capture_window;
     delete cam;
     delete capture_thread;
+    delete plabel_frame;
+    delete frame_yuv;
+    delete frame_rgb;
     delete ui;
 }
 
@@ -102,6 +106,7 @@ void MainWindow::Capture()
 {
     eCAM::buffer frame_buf;
     QTransform frame_trans;
+    QPixmap temp_qmap;
 
     std::unique_lock<std::mutex> capture_lock(capture_mutex);
     frame_trans.rotate(90);
@@ -115,24 +120,41 @@ void MainWindow::Capture()
         }
 
         do{
-            /*Get frame*/
-            frame_buf = cam->GetFrame();
+            try{
+                /*Get frame*/
+                frame_buf = cam->GetFrame();
 
-            /*Convert color space of frame image*/
-            memcpy(frame_yuv->data, frame_buf.data[0], frame_buf.size);
-            cv::cvtColor(*frame_yuv, *frame_rgb, CV_YUV2RGB_UYVY);
+                /*Convert color space of frame image*/
+                std::memcpy(frame_yuv->data, frame_buf.data[0], frame_buf.size);
+                cv::cvtColor(*frame_yuv, *frame_rgb, CV_YUV2RGB_UYVY);
 
-            /*Show frame*/
-            frame_qmap = QPixmap::fromImage(*frame_qimg).transformed(frame_trans);
-            frame_qmap = frame_qmap.scaled(plabel_frame->width(),
-                                                plabel_frame->height());
-            plabel_frame->setPixmap(frame_qmap);
+                /*Show frame*/
+                if(!frame_qimg->isNull()){
+                    temp_qmap = QPixmap::fromImage(*frame_qimg).transformed(frame_trans);
 
-            /*save image*/
-            if(save_frame){
-//                frame_qmap.save("face.bmp");
-                save_frame = false;
-                break;
+                    if(!temp_qmap.isNull()){
+                        frame_qmap = temp_qmap.scaled(plabel_frame->width(),
+                                                      plabel_frame->height());
+
+                        if(!frame_qmap.isNull()){
+                            plabel_frame->setPixmap(frame_qmap);
+
+                            /*save image*/
+                            if(save_frame){
+                                //                    frame_qmap.save("face.bmp");
+                                save_frame = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }catch(std::exception& ex){
+                std::cerr<<ex.what()<<std::endl;
+            }catch(cv::Exception& ex){
+                std::cerr<<ex.what()<<std::endl;
+            }catch(QException& ex){
+                std::cerr<<ex.what()<<std::endl;
             }
         }while(true);
     }while(true);
@@ -174,28 +196,28 @@ void MainWindow::httpUploadFinished2(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::NoError){
         msg_box.close();
 
-        QString str = (QString)reply -> readAll();
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(str.toUtf8());
-        QJsonObject jsonObj = jsonResponse.object();
+//        QString str = (QString)reply -> readAll();
+//        QJsonDocument jsonResponse = QJsonDocument::fromJson(str.toUtf8());
+//        QJsonObject jsonObj = jsonResponse.object();
 
-        if(jsonObj["response"] == "1"){
-            QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(this, "info", "Wellcome!! \t "+jsonObj["username"].toString()+"\n"+jsonObj["datetime"].toString(),
-                    QMessageBox::Yes|QMessageBox::No);
-            if (reply == QMessageBox::Yes) {
-                qDebug() << "Yes was clicked";
-                QApplication::quit();
-            } else {
-                qDebug() << "Yes was not clicked";
-            }
-            //QMessageBox::information(this,"send","success");
-        }else{
-            QMessageBox::information(this,"send","fail");
-        }
+//        if(jsonObj["response"] == "1"){
+//            QMessageBox::StandardButton reply;
+//            reply = QMessageBox::question(this, "info", "Wellcome!! \t "+jsonObj["username"].toString()+"\n"+jsonObj["datetime"].toString(),
+//                    QMessageBox::Yes|QMessageBox::No);
+//            if (reply == QMessageBox::Yes) {
+//                qDebug() << "Yes was clicked";
+//                QApplication::quit();
+//            } else {
+//                qDebug() << "Yes was not clicked";
+//            }
+//            //QMessageBox::information(this,"send","success");
+//        }else{
+//            QMessageBox::information(this,"send","fail");
+//        }
     }else{
         QString error_code = reply->errorString();
         msg_box.setText(error_code);
-//        QMessageBox::information(this,"send",reply->errorString());
+////        QMessageBox::information(this,"send",reply->errorString());
         std::cerr<<error_code.toStdString()<<std::endl;
     }
         //        this->close();
