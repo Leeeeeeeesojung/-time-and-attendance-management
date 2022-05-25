@@ -215,7 +215,7 @@ def get_dataset_clfw(input_dir):
   ret = []
   label = 0
   for img in os.listdir(input_dir):
-    fimage = edict()
+    fimage = edict()          
     fimage.id = img
     fimage.classname = str(0)
     fimage.image_path = os.path.join(input_dir, img)

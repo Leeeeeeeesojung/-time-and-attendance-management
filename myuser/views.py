@@ -72,37 +72,56 @@ def login(request): #출근
                 email = myuser.email,
                 position = myuser.position,
                 department = myuser.department,
-
                 jsondata = {}
                 jsondata["username"] = username
                 # jsondata["datetime"] = datetime.now()
                 jsondata["response"] = "1"
-                return JsonResponse(jsondata)
+
+                test = Test(
+                username = username,
+                position = position,
+                department = department,
+                dateTimeOfAM = datetime.now()
+                )
+                test.save()
+
+                e_mail = myuser.email
+                mail_subject = '이메일 보냅니다!'
+                message = render_to_string('smtp_email.html', {
+                'name': ''
+                    })
+                to_email = e_mail
+                send_email = EmailMessage(mail_subject, message, to=[to_email])
+                send_email.send()
+                print(myuser, username, email, position, department)
                 
+                jsondata = userinfoToJson(myuser)
+                return JsonResponse(jsondata)
+
             else:
                 return HttpResponse("fail")
 
-            print(myuser, username, email, position, department)
+            # print(myuser, username, email, position, department)
 
-            test = Test(
-            username = username,
-            position = position,
-            department = department,
-            dateTimeOfAM = datetime.now()
-            )
-            test.save()
+            # test = Test(
+            # username = username,
+            # position = position,
+            # department = department,
+            # dateTimeOfAM = datetime.now()
+            # )
+            # test.save()
 
-            e_mail = myuser.email
-            mail_subject = '이메일 보냅니다!'
-            message = render_to_string('smtp_email.html', {
-            'name': ''
-                })
-            to_email = e_mail
-            send_email = EmailMessage(mail_subject, message, to=[to_email])
-            send_email.send()
+            # e_mail = myuser.email
+            # mail_subject = '이메일 보냅니다!'
+            # message = render_to_string('smtp_email.html', {
+            # 'name': ''
+            #     })
+            # to_email = e_mail
+            # send_email = EmailMessage(mail_subject, message, to=[to_email])
+            # send_email.send()
 
-            jsondata = userinfoToJson(myuser)
-            return JsonResponse(jsondata) 
+            # jsondata = userinfoToJson(myuser)
+            # return JsonResponse(jsondata) 
 
 @csrf_exempt
 #퇴근
@@ -141,7 +160,6 @@ def logout(request):  #퇴근/ 이미지 파일을 가져와서 이미지 이름
             jsondata = userinfoToJson(myuser)
             return JsonResponse(jsondata)
             
-
         else:
             return HttpResponse("fail")
             

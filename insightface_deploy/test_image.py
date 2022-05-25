@@ -37,7 +37,7 @@ def init():
     model = face_model.FaceModel(args)
     #____________________________Base______________________________
 
-    folder = 'C:/Users/Leesojung/work/community/media/result'
+    folder = 'C:\\Users\\Leesojung\\work\\community\\media\\result\\'
     images = []
 
     f = []
@@ -58,9 +58,9 @@ def init():
         if images is not None:
             images.append(img)
         img = model.get_input(img)
-        ff = model.get_feature(img)
-        if ff != 0:
-            f.append(ff)
+        f.append(model.get_feature(img))
+        
+            
 
 
     #______________________________________face_recognition_model_____________________________________________________________________
@@ -73,7 +73,8 @@ def init():
     ################################################################
 # Analysis faces in this image
 def check(model,model1,f,file_path):
-    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
+    # frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
+    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/test.bmp')
 
 
     if os.path.isfile('C:/Users/Leesojung/work/community/media/result/'+str(file_path)):
