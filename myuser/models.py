@@ -36,7 +36,7 @@ class Center(models.Model):
     department = models.CharField(max_length=64, verbose_name='부서')
 
 class Test(models.Model): #회원정보: 출퇴근 시간 기록 보관, 시간, 사람이름, 부서, 직책
-   dateTimeOfAM = models.DateTimeField(default=datetime.now(), verbose_name='출근시간')
+   dateTimeOfAM = models.DateTimeField(default=datetime.now, verbose_name='출근시간')
    dateTimeOfPM = models.DateTimeField(null=True,blank=True, verbose_name='퇴근시간')
    username= models.CharField(max_length = 64, verbose_name='사용자명')
    position = models.CharField(max_length=64, verbose_name='직책')

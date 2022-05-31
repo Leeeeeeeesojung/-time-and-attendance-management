@@ -73,13 +73,13 @@ def init():
     ################################################################
 # Analysis faces in this image
 def check(model,model1,f,file_path):
-    # frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
-    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/test.bmp')
+    frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
+    # frame = cv2.imread('C:/Users/Leesojung/work/community/media/result/test.bmp')
 
 
     if os.path.isfile('C:/Users/Leesojung/work/community/media/result/'+str(file_path)):
        os.remove('C:/Users/Leesojung/work/community/media/result/'+str(file_path))
-    folder = 'C:/Users/Leesojung/work/community/media/result'
+    folder = 'C:\\Users\\Leesojung\\work\\community\\media\\result\\'
     images = []
     print(file_path)
 
@@ -97,10 +97,12 @@ def check(model,model1,f,file_path):
                     print(file_name)
                     break
 
-    font = cv2.FONT_HERSHEY_SIMPLEX    #*                           #__________________________________________Test image______________________________________
+
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    print(font)    #*                           #__________________________________________Test image______________________________________
 
 
-    frame = cv2.resize(frame,(1080, 780)) #1080 780
+    # frame = cv2.resize(frame,(1080, 780)) #1080 780
 
     faces = model1.get(frame)
     for idx, face in enumerate(faces):
@@ -114,9 +116,11 @@ def check(model,model1,f,file_path):
             if w1>50:
                 print('w1>50')
                 img_ = model.get_input(crop_img)
+                print("get_input")
                 f_test = model.get_feature(img_)
+                print("get_")
                 for i in range(0, len(f)):
-                    if np.sum(np.square(f_test-f[i])) < 1.1: # Ecludian distance
+                    if np.sum(np.square(f_test-f[i])) < 0.9: # Ecludian distance
                         print("success")
                         dd = i
                         print(file_name[dd])

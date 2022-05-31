@@ -76,31 +76,29 @@ def login(request): #출근
                 jsondata["username"] = username
                 # jsondata["datetime"] = datetime.now()
                 jsondata["response"] = "1"
+
+                test = Test(
+                username = username,
+                position = position,
+                department = department,
+                dateTimeOfAM = datetime.now()
+                )
+                test.save()
+
+                e_mail = myuser.email
+                mail_subject = '이메일 보냅니다!'
+                message = render_to_string('smtp_email.html', {
+                'name': username
+                    })
+                to_email = e_mail
+                send_email = EmailMessage(mail_subject, message, to=[to_email])
+                send_email.send()
+                print(myuser, username, email, position, department)
+                
+                jsondata = userinfoToJson(myuser)
                 return JsonResponse(jsondata)
 
-            print(myuser, username, email, position, department)
-
-            test = Test(
-            username = username,
-            position = position,
-            department = department,
-            dateTimeOfAM = datetime.now()
-            )
-            test.save()
-
-            e_mail = myuser.email
-            mail_subject = '이메일 보냅니다!'
-            message = render_to_string('smtp_email.html', {
-            'name': ''
-                })
-            to_email = e_mail
-            send_email = EmailMessage(mail_subject, message, to=[to_email])
-            send_email.send()
-            
-            jsondata = userinfoToJson(myuser)
-            return JsonResponse(jsondata)
-
-    else:
+            else:
                 return HttpResponse("fail")
 
             # print(myuser, username, email, position, department)
@@ -154,9 +152,15 @@ def logout(request):  #퇴근/ 이미지 파일을 가져와서 이미지 이름
             jsondata["username"] = username
             # jsondata["datetime"] = datetime.now()
             jsondata["response"] = "1"
-            test = Test.objects.filter(username=username).last()
-            test.dateTimeOfPM = datetime.now()
+            
+            test = Test(
+            username = username,
+            position = position,
+            department = department,
+            dateTimeOfPM = datetime.now()
+            )
             test.save()
+
             print(myuser, username, email, position, department)
 
             jsondata = userinfoToJson(myuser)
